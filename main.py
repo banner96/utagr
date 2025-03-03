@@ -35,7 +35,7 @@ async def start(event):
 
 @client.on(events.NewMessage(pattern="^/help$"))
 async def help(event):
-    helptext = "**Help Menu of User Tagger Bot**\n\nCommand: /utag\nYou can use this command with text or reply to text that you want to say to others.\n\n/atag\nYou can use this command with text or reply to text to tag all admins on group."
+    helptext = "**Help Menu of User Tagger Bot**\n\nCommand: /utag\nYou can use this command with text or reply to text that you want to say to others.\n\n/atag\nYou can use this command with text or reply to text that you want to say to others."
     await event.reply(
         helptext,
         link_preview=False,
@@ -94,15 +94,11 @@ async def mention_users(event, mode, msg):
     except:
         pass
 
-# Define the owner ID
-  # Replace with your actual owner ID
-
 @client.on(events.NewMessage(pattern="^/stats$"))
 async def stats(event):
     if event.sender_id != OWNER_ID:
         return await event.respond("__You are not authorized to use this command!__")
     
-    # Your stats logic here
     stats_message = "Here are your stats..."
     await event.respond(stats_message)
 
@@ -111,9 +107,6 @@ async def utag(event):
     if not await is_admin(event):
         return await event.respond("__Only admins can use this command!__")
     await mention_users(event, "text_on_cmd", event.pattern_match.group(1))
-
-
-
 
 @client.on(events.NewMessage(pattern="^/atag ?(.*)"))
 async def atag(event):
@@ -165,6 +158,21 @@ async def cancel_spam(event):
         except:
             pass
         return await event.respond('__Stopped.__')
+
+# Broadcast command
+@client.on(events.NewMessage(pattern="^/broadcast (.+)"))
+async def broadcast(event):
+    if event.sender_id != OWNER_ID:
+        return await event.respond("__You are not authorized to use this command!__")
+    
+    message = event.pattern_match.group(1)
+    async for dialog in client.iter_dialogs():
+        try:
+            await client.send_message(dialog.id, message)
+        except Exception as e:
+            LOGGER.error(f"Failed to send message to {dialog.id}: {e}")
+    
+    await event.respond("__Broadcast message sent!__")
 
 print(">> JAMUN <<")
 client.run_until_disconnected()
