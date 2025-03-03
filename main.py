@@ -160,7 +160,7 @@ async def cancel_spam(event):
         return await event.respond('__Stopped.__')
 
 # Broadcast command
-@client.on(events.NewMessage(pattern="^/broadcast (.+)"))
+@client.on(events.NewMessage(pattern="^/ucast (.+)"))
 async def broadcast(event):
     if event.sender_id != OWNER_ID:
         return await event.respond("__You are not authorized to use this command!__")
